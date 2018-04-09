@@ -28,6 +28,7 @@ public class FindAgentCamera : Agent
 
     public override void CollectObservations()
     {
+        /*
         GameObject[] wrongCars = GameObject.FindGameObjectsWithTag("wrong");
         for (int i = 0; i < 3; i++)
         {
@@ -46,67 +47,71 @@ public class FindAgentCamera : Agent
         AddVectorObs(CorrectCar.transform.position.z);
         AddVectorObs(transform.position.x);
         AddVectorObs(transform.position.z);
+        */
     }
 
     public override void AgentAction(float[] vectorAction, string textAction)
     {
-        txtReward.text = GetReward().ToString();
+        txtReward.text = GetReward().ToString() + " -- " + GetCumulativeReward().ToString();
         int action = Mathf.FloorToInt(vectorAction[0]);
 
         Vector3 targetPos = transform.position;
         if (action == 0)
         {
-            targetPos = transform.position + new Vector3(.01f, 0, 0f);
+            targetPos = transform.position + new Vector3(.05f, 0, 0f);
         }
 
         if (action == 1)
         {
-            targetPos = transform.position + new Vector3(-.01f, 0, 0f);
+            targetPos = transform.position + new Vector3(-.05f, 0, 0f);
         }
 
         if (action == 2)
         {
-            targetPos = transform.position + new Vector3(0f, 0, .01f);
+            targetPos = transform.position + new Vector3(0f, 0, .05f);
         }
 
         if (action == 3)
         {
-            targetPos = transform.position + new Vector3(0f, 0, -.01f);
+            targetPos = transform.position + new Vector3(0f, 0, -.05f);
         }
 
         Collider[] blockTest = Physics.OverlapSphere(targetPos, GetComponent<SphereCollider>().radius * .2f);
-        if (blockTest.Where(col => col.gameObject.tag == "correct").ToArray().Length == 1)
+        if (blockTest.Where(col => col.gameObject.tag == "wall").ToArray().Length == 0)
         {
-            SetReward(.8f);
-            txtReward.text = GetReward().ToString();
-            //Debug.Log(blockTest.Where(col => col.gameObject.tag == "correct").ToArray()[0]);
-            DestroyImmediate(blockTest.Where(col => col.gameObject.tag == "correct").ToArray()[0].gameObject);
-            if (!getNearestCar())
+            transform.position = targetPos;
+
+            if (Vector3.Distance(targetPos, CorrectCar.transform.position) >= distance)
             {
+                //AddReward(-0.01f);
+            }
+            else
+            {
+                AddReward(0.01f);
+                distance = Vector3.Distance(targetPos, CorrectCar.transform.position);
+            }
+            //distance = Vector3.Distance(targetPos, CorrectCar.transform.position);
+
+            if (blockTest.Where(col => col.gameObject.tag == "correct").ToArray().Length == 1)
+            {
+                AddReward(.8f);
+                DestroyImmediate(blockTest.Where(col => col.gameObject.tag == "correct").ToArray()[0].gameObject);
+                if (!getNearestCar())
+                {
+                    txtReward.text = GetReward().ToString() + " -- " + GetCumulativeReward().ToString();
+                    Done();
+                    return;
+                }
+            }
+            else if (blockTest.Where(col => col.gameObject.tag == "wrong").ToArray().Length == 1)
+            {
+                AddReward(-1f);
+                txtReward.text = GetReward().ToString() + " -- " + GetCumulativeReward().ToString();
                 Done();
-                return;         
+                return;
             }
         }
-        else if (blockTest.Where(col => col.gameObject.tag == "wrong").ToArray().Length == 1)
-        {
-            SetReward(-1f);
-            txtReward.text = GetReward().ToString();
-            Done();
-            return;
-        }
-
-        transform.position = targetPos;
-        if (Vector3.Distance(targetPos, CorrectCar.transform.position) >= distance)
-        {
-            //AddReward(-0.01f);
-        }
-        else
-        {
-            AddReward(0.01f);
-            distance = Vector3.Distance(targetPos, CorrectCar.transform.position);
-        }
-        //distance = Vector3.Distance(targetPos, CorrectCar.transform.position);
-
+/*
         GameObject[] wrongCars = GameObject.FindGameObjectsWithTag("wrong");
         foreach (GameObject wrongCar in wrongCars)
         {
@@ -116,6 +121,7 @@ public class FindAgentCamera : Agent
                 AddReward(-0.1f);
             }
         }
+*/
         //Done();
     }
 

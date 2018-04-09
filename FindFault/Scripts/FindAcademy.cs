@@ -19,6 +19,7 @@ public class FindAcademy : Academy {
 
     private static int ALL_COLOR = 5;
     private Color[] testColor = new Color[ALL_COLOR];
+    private int nCorrectA, nCorrectB, nWrong;
 
 
     public override void InitializeAcademy()
@@ -36,9 +37,9 @@ public class FindAcademy : Academy {
 
     public override void AcademyReset()
     {
-        CorrectA = Random.Range(0, 4);
-        CorrectB = Random.Range(1, 4);
-        Wrong = Random.Range(1, 4);
+        nCorrectA = Random.Range(0, CorrectA+1);
+        nCorrectB = Random.Range(1, CorrectB+1);
+        nWrong = Random.Range(1, Wrong+1);
 
         //Debug.Log("Academy reset");
         for (int i = CorrectParentA.transform.childCount - 1; i >= 0; i--)
@@ -54,7 +55,7 @@ public class FindAcademy : Academy {
             DestroyImmediate(WrongParent.transform.GetChild(i).gameObject);
         }
 
-        for (int i = 0; i < CorrectA; i++)
+        for (int i = 0; i < nCorrectA; i++)
         {
             float x = Random.Range(CorrectParentA.transform.position.x - CorrectParentA.GetComponent<Renderer>().bounds.size.x/2 + CorrectPreFab.GetComponent<Renderer>().bounds.size.x / 2,
                                     CorrectParentA.transform.position.x + CorrectParentA.GetComponent<Renderer>().bounds.size.x / 2 - CorrectPreFab.GetComponent<Renderer>().bounds.size.x / 2);
@@ -71,7 +72,7 @@ public class FindAcademy : Academy {
             objCorrect.tag = "correct";
         }
 
-        for (int i = 0; i < CorrectB; i++)
+        for (int i = 0; i < nCorrectB; i++)
         {
             float x = Random.Range(CorrectParentB.transform.position.x - CorrectParentB.GetComponent<Renderer>().bounds.size.x / 2 + CorrectPreFab.GetComponent<Renderer>().bounds.size.x / 2,
                                     CorrectParentB.transform.position.x + CorrectParentB.GetComponent<Renderer>().bounds.size.x / 2 - CorrectPreFab.GetComponent<Renderer>().bounds.size.x / 2);
@@ -88,7 +89,7 @@ public class FindAcademy : Academy {
             objCorrect.tag = "correct";
         }
 
-        for (int i = 0; i < Wrong; i++)
+        for (int i = 0; i < nWrong; i++)
         {
             float x = Random.Range(WrongParent.transform.position.x - WrongParent.GetComponent<Renderer>().bounds.size.x / 2 + WrongPreFab.GetComponent<Renderer>().bounds.size.x / 2,
                                     WrongParent.transform.position.x + WrongParent.GetComponent<Renderer>().bounds.size.x / 2 - WrongPreFab.GetComponent<Renderer>().bounds.size.x / 2);
